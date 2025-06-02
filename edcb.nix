@@ -39,6 +39,10 @@ stdenv.mkDerivation rec {
 
     echo "Patching EpgDataCap_Bon/EpgDataCap_Bon/Makefile for install paths"
     sed -i 's|install \(.*\) /usr/local/bin|install \1 $(DESTDIR)$(PREFIX)/bin|g' EpgDataCap_Bon/EpgDataCap_Bon/Makefile
+
+    echo "Patching EpgDataCap3/EpgDataCap3/Makefile for mkdir and install paths"
+    sed -i 's|mkdir -p /usr/local/lib/edcb|mkdir -p $(DESTDIR)/usr/local/lib/edcb|g' EpgDataCap3/EpgDataCap3/Makefile
+    sed -i 's|install\(.*\) /usr/local/lib/edcb|install \1 $(DESTDIR)/usr/local/lib/edcb|g' EpgDataCap3/EpgDataCap3/Makefile
     runHook postPatch
   '';
 
