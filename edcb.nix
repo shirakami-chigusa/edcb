@@ -55,11 +55,11 @@ stdenv.mkDerivation rec {
     cd Document/Unix
 
     # Install main components
-    make install PREFIX=$out
+    make install DESTDIR=$out PREFIX=/usr/local
     # Install extra tools
-    make install_extra PREFIX=$out
+    make install_extra DESTDIR=$out PREFIX=/usr/local
     # Install EpgTimerSrv
-    make EpgTimerSrv.install PREFIX=$out
+    make EpgTimerSrv.install DESTDIR=$out PREFIX=/usr/local
 
     # Configuration files
     # mkdir -p $out/share/edcb/ini
