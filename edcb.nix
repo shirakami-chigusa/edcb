@@ -36,6 +36,9 @@ stdenv.mkDerivation rec {
     # Replace hardcoded /usr/local/bin with $(DESTDIR)$(PREFIX)/bin for install targets
     # This makes sure tools are installed into $out correctly when DESTDIR is used.
     sed -i 's|install\(.*\) /usr/local/bin|install \1 $(DESTDIR)$(PREFIX)/bin|g' Document/Unix/Makefile
+
+    echo "Patching EpgDataCap_Bon/EpgDataCap_Bon/Makefile for install paths"
+    sed -i 's|install \(.*\) /usr/local/bin|install \1 $(DESTDIR)$(PREFIX)/bin|g' EpgDataCap_Bon/EpgDataCap_Bon/Makefile
     runHook postPatch
   '';
 
@@ -58,6 +61,10 @@ stdenv.mkDerivation rec {
 
     # Change to the directory containing the main Makefile
     cd Document/Unix
+
+    # Ensure $out/bin exists, as per user's example installPhase.
+    # This might be redundant if make install correctly creates $out/usr/local/bin.
+    mkdir -p $out/bin
 
     # Install main components
     make install DESTDIR=$out PREFIX=/usr/local
