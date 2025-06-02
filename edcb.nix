@@ -26,6 +26,14 @@ stdenv.mkDerivation rec {
     cd Document/Unix
   '';
 
+  patchPhase = ''
+    runHook prePatch
+    echo "Patching EpgTimerSrv Makefile to use -llua instead of -llua5.2"
+    # Path relative to source root, as patchPhase runs before preBuild's cd.
+    sed -i 's/-llua5.2/-llua/g' EpgTimerSrv/EpgTimerSrv/Makefile
+    runHook postPatch
+  '';
+
   buildPhase = ''
     runHook preBuild
     # Default make command
@@ -42,6 +50,10 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     runHook preInstall
+
+    # Change to the directory containing the main Makefile
+    cd Document/Unix
+
     # Install main components
     make install PREFIX=$out
     # Install extra tools
