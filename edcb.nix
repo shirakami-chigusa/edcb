@@ -33,16 +33,27 @@ stdenv.mkDerivation rec {
     sed -i 's/-llua5.2/-llua/g' EpgTimerSrv/EpgTimerSrv/Makefile
 
     echo "Patching Document/Unix/Makefile for install_tools target paths"
-    # Replace hardcoded /usr/local/bin with $(DESTDIR)$(PREFIX)/bin for install targets
+    # Replace hardcoded /usr/local/bin with $(DESTDIR)/bin, as PREFIX is now "" in installPhase.
     # This makes sure tools are installed into $out correctly when DESTDIR is used.
-    sed -i 's|install\(.*\) /usr/local/bin|install \1 $(DESTDIR)$(PREFIX)/bin|g' Document/Unix/Makefile
+    sed -i 's|install\(.*\) /usr/local/bin|install \1 $(DESTDIR)/bin|g' Document/Unix/Makefile
 
     echo "Patching EpgDataCap_Bon/EpgDataCap_Bon/Makefile for install paths"
-    sed -i 's|install \(.*\) /usr/local/bin|install \1 $(DESTDIR)$(PREFIX)/bin|g' EpgDataCap_Bon/EpgDataCap_Bon/Makefile
+    # Replace hardcoded /usr/local/bin with $(DESTDIR)/bin
+    sed -i 's|install \(.*\) /usr/local/bin|install \1 $(DESTDIR)/bin|g' EpgDataCap_Bon/EpgDataCap_Bon/Makefile
 
     echo "Patching EpgDataCap3/EpgDataCap3/Makefile for mkdir and install paths"
-    sed -i 's|mkdir -p /usr/local/lib/edcb|mkdir -p $(DESTDIR)/usr/local/lib/edcb|g' EpgDataCap3/EpgDataCap3/Makefile
-    sed -i 's|install\(.*\) /usr/local/lib/edcb|install \1 $(DESTDIR)/usr/local/lib/edcb|g' EpgDataCap3/EpgDataCap3/Makefile
+    # Replace hardcoded /usr/local/lib/edcb with $(DESTDIR)/lib/edcb
+    sed -i 's|mkdir -p /usr/local/lib/edcb|mkdir -p $(DESTDIR)/lib/edcb|g' EpgDataCap3/EpgDataCap3/Makefile
+    sed -i 's|install\(.*\) /usr/local/lib/edcb|install \1 $(DESTDIR)/lib/edcb|g' EpgDataCap3/EpgDataCap3/Makefile
+
+    echo "Patching RecName_Macro/RecName_Macro/Makefile for mkdir and install paths"
+    # Replace hardcoded /usr/local/lib/edcb with $(DESTDIR)/lib/edcb
+    sed -i 's|mkdir -p /usr/local/lib/edcb|mkdir -p $(DESTDIR)/lib/edcb|g' RecName_Macro/RecName_Macro/Makefile
+    sed -i 's|install\(.*\) /usr/local/lib/edcb|install \1 $(DESTDIR)/lib/edcb|g' RecName_Macro/RecName_Macro/Makefile
+
+    echo "Patching SendTSTCP/SendTSTCP/Makefile for mkdir and install paths"
+    sed -i 's|mkdir -p /usr/local/lib/edcb|mkdir -p $(DESTDIR)/lib/edcb|g' SendTSTCP/SendTSTCP/Makefile
+    sed -i 's|install\(.*\) /usr/local/lib/edcb|install \1 $(DESTDIR)/lib/edcb|g' SendTSTCP/SendTSTCP/Makefile
     runHook postPatch
   '';
 
@@ -71,11 +82,11 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin
 
     # Install main components
-    make install DESTDIR=$out PREFIX=/usr/local
+    make install DESTDIR=$out PREFIX=""
     # Install extra tools
-    make install_extra DESTDIR=$out PREFIX=/usr/local
+    make install_extra DESTDIR=$out PREFIX=""
     # Install EpgTimerSrv
-    make EpgTimerSrv.install DESTDIR=$out PREFIX=/usr/local
+    make EpgTimerSrv.install DESTDIR=$out PREFIX=""
 
     # Configuration files
     # mkdir -p $out/share/edcb/ini
