@@ -31,6 +31,11 @@ stdenv.mkDerivation rec {
     echo "Patching EpgTimerSrv Makefile to use -llua instead of -llua5.2"
     # Path relative to source root, as patchPhase runs before preBuild's cd.
     sed -i 's/-llua5.2/-llua/g' EpgTimerSrv/EpgTimerSrv/Makefile
+
+    echo "Patching Document/Unix/Makefile for install_tools target paths"
+    # Replace hardcoded /usr/local/bin with $(DESTDIR)$(PREFIX)/bin for install targets
+    # This makes sure tools are installed into $out correctly when DESTDIR is used.
+    sed -i 's|install\(.*\) /usr/local/bin|install \1 $(DESTDIR)$(PREFIX)/bin|g' Document/Unix/Makefile
     runHook postPatch
   '';
 
